@@ -1,0 +1,8 @@
+Match ROM/FSBL parsing
+  Though bootgen-generated boot images seem to be parsed correctly, the tool
+  fails on boot images created by U-Boot - which boot on HW successfully. If a
+  image works in the real world, this tool should be able to read it too.
+
+Add custom exception
+  When an invalid header is detected, currently a RuntimeError exception is
+  raised. It would be nice to have a more approriate exception for these cases.

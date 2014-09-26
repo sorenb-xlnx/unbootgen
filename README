@@ -1,0 +1,17 @@
+				Unbootgen
+
+Unbootgen parses Zynq boot images and can be used to display information from
+contained headers or dump partition data.
+
+Known issues:
+  Zynq's boot ROM and FSBL might parse the boot image differently. There may be
+  boot images existing that work but cannot be parsed by unbootgen (see TODO).
+
+Examples:
+  Show all headers of an image:
+    unbootgen show --all <bootimage>
+  Show one header at offset:
+    unbootgen show <bootimage> <offset>
+
+  Dump partition data:
+    unbootgen dump <bootimage> <offset> <output_file>
