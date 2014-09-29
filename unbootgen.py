@@ -190,11 +190,10 @@ class c_image_header(c_header):
         fd.seek(self.addr + 0x10)
         string = ""
         while True:
-            tmp = fd.read(4)
-            if tmp == struct.pack('bbbb', 0, 0, 0, 0):
+            tmp = fd.read(4)[::-1].rstrip(b'\0').decode()
+            if not tmp:
                 break
-            for i in range(3, -1, -1):
-                string += chr(tmp[i])
+            string += tmp
         return string
 
     def parse_partitions(self, fd):
