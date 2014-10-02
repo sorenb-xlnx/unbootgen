@@ -103,11 +103,21 @@ class c_boot_header(c_header):
             print("ERROR: no partition found at offset {:x}".format(offset), file=sys.stderr)
             return None
 
-        if part.get_type() != "Partition Header":
+        if part.get_type() != "Partition Header" and part != self:
             print("ERROR: invalid header type for dump {}".format(part.get_type()), file=sys.stderr)
             return None
 
         part.dump(self.image, fdout)
+
+    def dump(self, fdin, fdout):
+        fdin.seek(self.get_data_offset())
+        fdout.write(fdin.read(self.get_partition_size()))
+
+    def get_data_offset(self):
+        return self.hdr["Source Offset"]
+
+    def get_partition_size(self):
+        return self.hdr["Length of Image"]
 
     def find_header_by_offset(self, offset):
         if self.addr == offset:
