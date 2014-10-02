@@ -25,6 +25,9 @@ import re
 import struct
 import sys
 
+class InvalidHeaderError(Exception):
+    pass
+
 class c_header:
     def get_address(self):
         assert(self.addr)
@@ -83,7 +86,7 @@ class c_boot_header(c_header):
         hdr = self._parse_header(fd)
 
         if hdr["Image Identification"] != 0x584C4E58:
-            raise RuntimeError("invalid {}".format(self.header_type))
+            raise InvalidHeaderError("invalid {}".format(self.header_type))
         return hdr
 
     def parse_image_header_table(self, fd):
@@ -133,7 +136,7 @@ class c_image_header_table(c_header):
         hdr = self._parse_header(fd)
 
         if hdr["Version"] != 0x01020000:
-            raise RuntimeError("invalid {}".format(self.header_type))
+            raise InvalidHeaderError("invalid {}".format(self.header_type))
         return hdr
 
     def parse_images(self, fd):
