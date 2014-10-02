@@ -73,11 +73,13 @@ class c_boot_header(c_header):
         self.image.seek(offset);
         self.addr = offset
         self.hdr = self.parse_header(self.image)
-        self.iht = self.parse_image_header_table(self.image)
+        try:
+            self.iht = self.parse_image_header_table(self.image)
+        except InvalidHeaderError:
+            self.iht = None;
         assert(self.hdr)
         assert(len(self.hdr) == len(self.header_entry))
         assert(self.addr)
-        assert(self.iht)
 
     def __del__(self):
         self.image.close()
@@ -110,7 +112,9 @@ class c_boot_header(c_header):
     def find_header_by_offset(self, offset):
         if self.addr == offset:
             return self
-        return self.iht.find_header_by_offset(offset)
+        if self.iht:
+            return self.iht.find_header_by_offset(offset)
+        return None
 
 class c_image_header_table(c_header):
     header_entry = [
@@ -286,6 +290,11 @@ def show_header(boot_header, args):
 
     if args.all:
         print(boot_header)
+
+        # minimalistic boot images have a boot header only
+        if not boot_header.iht:
+            return
+
         string = repr(boot_header.iht)
         string = re.sub(r'^(.)', r'\t\1', string, flags=re.MULTILINE)
         print(string)
