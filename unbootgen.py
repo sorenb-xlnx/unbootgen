@@ -89,7 +89,18 @@ class c_boot_header(c_header):
 
         if hdr["Image Identification"] != 0x584C4E58:
             raise InvalidHeaderError("invalid {}".format(self.header_type))
+        if not self._verify_checksum(hdr):
+            raise InvalidHeaderError("invalid header checksum in {}".format(self.header_type))
+
         return hdr
+
+    def _verify_checksum(self, hdr):
+        checksum = 0
+        for i in range(self.header_entry.index('Header Checksum')):
+            checksum += hdr[self.header_entry[i]]
+        checksum = ~checksum
+        checksum &= 0xffffffff
+        return checksum == hdr['Header Checksum']
 
     def parse_image_header_table(self, fd):
         fd.seek(0x98)   # magic offset from FSBL source code
