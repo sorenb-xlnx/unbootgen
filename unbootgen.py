@@ -89,6 +89,8 @@ class c_boot_header(c_header):
 
         if hdr["Image Identification"] != 0x584C4E58:
             raise InvalidHeaderError("invalid {}".format(self.header_type))
+        if hdr["Width Detection"] != 0xaa995566:
+            raise InvalidHeaderError("invalid {}".format(self.header_type))
         if not self._verify_checksum(hdr):
             raise InvalidHeaderError("invalid header checksum in {}".format(self.header_type))
 
